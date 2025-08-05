@@ -1,11 +1,15 @@
 import React, { Component } from 'react';
 import {getMovies} from '../services/fakeMovieService';
 import Like from '../common/like';
+import Pagination from '../common/pagination';
+import { paginate } from '../utils/paginate';
 
 
 class Movies extends Component {
     state = { 
-        movies: getMovies()
+        movies: getMovies(),
+        pageSize: 4,
+        currentPage: 1
      };
 
      //deletes a movie
@@ -17,6 +21,7 @@ handleDelete = (movie) => {
 }
 
 
+//handles like
 handleLike = (movie) => {
  // ... clones all the properties of the counters State
         const movies = [...this.state.movies];
@@ -26,12 +31,22 @@ handleLike = (movie) => {
         this.setState({movies})
 }
 
+//handles page change
+handlePageChange = (page) => {
+this.setState({currentPage: page})
+}
+
     render() { 
 
         const {length: count} = this.state.movies
+        const {pageSize, currentPage, movies: allMovies} = this.state;
         // if the length is 0, then display 0 or this play the number of movies
         if (count === 0)  return (
         <p>There are no movies in the database.</p>)
+
+        //call paginate function
+        const movies = paginate(allMovies, currentPage, pageSize);
+
         return (
            <> <p>Showing {count} movies in the database.</p>
             <table className="table">
@@ -47,7 +62,7 @@ handleLike = (movie) => {
                 </thead>
             <tbody>
                 {/* this list the movies */}
-                {this.state.movies.map(movie => (<tr key={movie._id}>
+                {movies.map(movie => (<tr key={movie._id}>
                     <td>{movie.title}</td>
                     <td>{movie.genre.name}</td>
                     <td>{movie.numberInStock}</td>
@@ -59,6 +74,11 @@ handleLike = (movie) => {
                
             </tbody>
              </table>
+             <Pagination 
+             itemsCount={count} 
+             pageSize={pageSize}
+             onPageChange={this.handlePageChange}
+             currentPage ={currentPage}/>
        </> );
     }
 }
