@@ -3,14 +3,24 @@ import {getMovies} from '../services/fakeMovieService';
 import Like from '../common/like';
 import Pagination from '../common/pagination';
 import { paginate } from '../utils/paginate';
+import ListGroup from '../common/listGroup';
+import { getGenres } from '../services/fakeGenreService';
 
 
 class Movies extends Component {
     state = { 
-        movies: getMovies(),
+        movies: [],
         pageSize: 4,
-        currentPage: 1
+        currentPage: 1,
+        genres: []
      };
+
+     // this is called when an instance of the component is rendered in the dom
+componentDidMount() {
+    // adds 'All Genres' at the top of the listGroup
+  const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
+  this.setState({ movies: getMovies(), genres });
+}
 
      //deletes a movie
 handleDelete = (movie) => {
@@ -34,21 +44,52 @@ handleLike = (movie) => {
 //handles page change
 handlePageChange = (page) => {
 this.setState({currentPage: page})
+};
+
+// handles the selected genre
+handleGenreSelect = (genre) => {
+    // it also resets current page to 1 whenever we go to all genres
+    this.setState( { selectedGenre: genre, currentPage: 1});
 }
 
     render() { 
-
+//this renames the length to count of the movies
         const {length: count} = this.state.movies
-        const {pageSize, currentPage, movies: allMovies} = this.state;
+        const {pageSize, currentPage, selectedGenre, movies: allMovies} = this.state;
+        
         // if the length is 0, then display 0 or this play the number of movies
         if (count === 0)  return (
         <p>There are no movies in the database.</p>)
 
+        // filtering and must come before pagination
+        const filtered = selectedGenre && selectedGenre._id
+        ? allMovies.filter(m => m.genre._id === selectedGenre._id) 
+        : allMovies;
+
         //call paginate function
-        const movies = paginate(allMovies, currentPage, pageSize);
+        // we removed the allMovies below and added filtered in place for the list group 
+        const movies = paginate(filtered, currentPage, pageSize);
 
         return (
-           <> <p>Showing {count} movies in the database.</p>
+            
+           
+           <div className='row'> 
+            {/* note the two columns  */}
+
+           <div className="col-3">
+            <ListGroup 
+            items={this.state.genres}
+            selectedItem={this.state.selectedGenre} 
+            onItemSelect= {this.handleGenreSelect}
+             textProperty="name"
+            valueProperty="_id"
+            />
+           </div>
+          
+          
+           <div className="col">
+            {/* displays number of movies */}
+             <p>Showing {filtered.length} movies in the database.</p>
             <table className="table">
                 <thead>
                     <tr>
@@ -75,11 +116,14 @@ this.setState({currentPage: page})
             </tbody>
              </table>
              <Pagination 
-             itemsCount={count} 
+            //  we remove count and change to filtered.length
+             itemsCount={filtered.length} 
              pageSize={pageSize}
              onPageChange={this.handlePageChange}
              currentPage ={currentPage}/>
-       </> );
+           </div>
+          
+       </div> );
     }
 }
  

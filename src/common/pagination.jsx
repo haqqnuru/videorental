@@ -19,8 +19,12 @@ const pages = _.range(1, pagesCount + 1)
         <nav aria-label="Page navigation example">
   <ul className="pagination">
     {pages.map(page => (
-      // apply the active class to the currentpage dynamically
-        <li key={page} className={page === currentPage ? "page-item active" : "psge-item"}>
+     
+        <li key={page}  
+        // added cursor to it
+        style={{cursor: "wait"}} 
+         // apply the active class to the currentpage dynamically
+        className={page === currentPage ? "page-item active" : "psge-item"}>
           <a className="page-link" 
           onClick={() => onPageChange(page)}>{page}
         </a></li>))}
@@ -30,6 +34,8 @@ const pages = _.range(1, pagesCount + 1)
      );
 }
 
+// tells React what types of props the Pagination component is expected to receive —
+//  and that all four props are required.
 Pagination.propTypes = {
   itemsCount: PropTypes.number.isRequired, 
   pageSize: PropTypes.number.isRequired,  
