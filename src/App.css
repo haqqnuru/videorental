@@ -40,3 +40,7 @@
   color: #888;
 }
 
+.clickable {
+  cursor:pointer;
+}
+
