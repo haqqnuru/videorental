@@ -7,6 +7,7 @@ import { getGenres } from '../services/fakeGenreService';
 import MoviesTable from './moviesTable';
 import _ from 'lodash';
 import { Link } from 'react-router-dom';
+import SearchBox from './searchBox';
 
 
 class Movies extends Component {
@@ -15,6 +16,8 @@ class Movies extends Component {
         pageSize: 4,
         currentPage: 1,
         genres: [],
+        searchQuery: "",
+        selectedGenre: null,
         sortColumn: {path: 'title', order: 'asc'}
      };
 
@@ -56,7 +59,13 @@ this.setState({currentPage: page})
 // handles the selected genre
 handleGenreSelect = (genre) => {
     // it also resets current page to 1 whenever we go to all genres
-    this.setState( { selectedGenre: genre, currentPage: 1});
+    this.setState( { selectedGenre: genre, searchQuery: "", currentPage: 1});
+}
+
+// handles search
+//selectedgenre was reset and current page too
+handleSearch = (query) => {
+    this.setState({searchQuery: query, selectedGenre:null, currentPage: 1})
 }
 
 // this handles sorting of the tables
@@ -70,15 +79,21 @@ getPagedData = () => {
     const {
             pageSize, 
             currentPage, 
-            selectedGenre, 
+            selectedGenre,
+            searchQuery, 
             movies: allMovies,
             sortColumn
         } = this.state;
 
+        let filtered = allMovies;
+        //for search query
+        if (searchQuery)
+            filtered = allMovies.filter(m =>
+        m.title.toLowerCase().includes(searchQuery.toLowerCase()));
+
      // filtering and must come before pagination
-        const filtered = selectedGenre && selectedGenre._id
-        ? allMovies.filter(m => m.genre._id === selectedGenre._id) 
-        : allMovies;
+      else if (selectedGenre && selectedGenre._id)
+          filtered = allMovies.filter(m => m.genre._id === selectedGenre._id);
 
         //sorting is after filtering data
         // lodash is used and note that it has three arguments
@@ -97,7 +112,8 @@ getPagedData = () => {
         const {
             pageSize, 
             currentPage, 
-            sortColumn
+            sortColumn,
+            searchQuery
         } = this.state;
         
         // if the length is 0, then display 0 or this play the number of movies
@@ -135,6 +151,8 @@ getPagedData = () => {
             
             {/* displays number of movies */}
              <p>Showing {totalCount} movies in the database.</p>
+
+             <SearchBox value = {searchQuery} onChange= {this.handleSearch}/>
 
           {/* pass our movies as well as handlers for onLike and onDelete */}
            <MoviesTable 
