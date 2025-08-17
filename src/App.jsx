@@ -8,6 +8,7 @@ import Rentals from './components/rentals';
 import NotFound from './components/notFound';
 import NavBar from './components/navBar';
 import MovieForm from './components/movieForm';
+import LoginForm from './components/loginForm';
 
 function App() {
   return (
@@ -15,12 +16,13 @@ function App() {
       <NavBar/>
        <Routes>
         {/* nested route begins with : */}
-         <Route path='/movies/:id' element={<MovieForm/>} />
+         <Route path='/login' element={<LoginForm/>} />
+          <Route path='/movies/:id' element={<MovieForm/>} />
         <Route path='/movies' element={<Movies/>} />
         <Route path='/customers' element={<Customers/>} />
         <Route path='/rentals' element={<Rentals />} />
         <Route path='/notFound' element={<NotFound />} />
-        {/* Redirect from / to /movies */}
+        {/* Redirect from / to /movies which is homepage */}
         <Route path='/' element={<Navigate to='/movies' />} />
         {/* Catch-all route for 404 */}
         <Route path='*' element={<Navigate to='/notFound' />} />

@@ -13,7 +13,8 @@ class MoviesTable extends Component {
     {path: 'title', 
         label: 'Title', 
         // this puts an hyperlink to the movie title
-        content: movie => <Link to={`/movies/${movie._id}`}>{movie.title}</Link>},
+        content: movie => <Link to={`/movies/${movie._id}`}
+        style={{ textDecoration: 'none' }}>{movie.title}</Link>},
     {path: 'genre.name', label: 'Genre'},
     {path: 'numberInStock', label: 'Stock'},
     {path: 'dailyRentalRate', label: 'Rate'},
