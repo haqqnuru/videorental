@@ -1,6 +1,7 @@
 import Joi from 'joi-browser';
 import React, { Component } from 'react';
 import Input from './input';
+import Select from './select';
 
 
 //this is a REUSABLE component
@@ -84,6 +85,21 @@ renderInput(name, label, type = "text", helpText = "") {
             error={errors[name]}
             helpText={helpText} 
         />
+    );
+}
+
+// extracts for selections
+renderSelect(name, label, options) {
+    const { data, errors } = this.state;
+    return (
+     <Select
+      name={name}
+            value={data[name]}
+            label={label}
+            options={options}
+            onChange={this.handleChange}
+            error={errors[name]}
+            />
     );
 }
 

@@ -3,7 +3,7 @@ import React from 'react';
 
 //this is a REUSABLE component
 
-const Input = ({name, label, error, helpText, ...rest}) => {
+const Input =({name, label, error, helpText, ...rest}) => {
     return ( 
         <div className="mb-3">
 
@@ -13,7 +13,7 @@ const Input = ({name, label, error, helpText, ...rest}) => {
     {...rest}
     name={name} 
     id={name} autoFocus/>
-    
+
     {helpText && <div id={`${name}Help`} className="form-text">{helpText}</div>}
 
     {error && <div className="alert alert-danger">{error}</div>}
