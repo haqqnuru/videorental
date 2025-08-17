@@ -9,6 +9,7 @@ import NotFound from './components/notFound';
 import NavBar from './components/navBar';
 import MovieForm from './components/movieForm';
 import LoginForm from './components/loginForm';
+import RegisteForm from './components/registerForm';
 
 function App() {
   return (
@@ -16,8 +17,10 @@ function App() {
       <NavBar/>
        <Routes>
         {/* nested route begins with : */}
+        <Route path='/register' element={<RegisteForm/>} />
          <Route path='/login' element={<LoginForm/>} />
-          <Route path='/movies/:id' element={<MovieForm/>} />
+         {/* nested route begins with : */}
+        <Route path='/movies/:id' element={<MovieForm/>} />
         <Route path='/movies' element={<Movies/>} />
         <Route path='/customers' element={<Customers/>} />
         <Route path='/rentals' element={<Rentals />} />
