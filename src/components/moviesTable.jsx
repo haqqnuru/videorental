@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Like from '../common/like';
 import Table from '../common/table';
 import { Link } from 'react-router-dom';
+import { capitalizeWords } from '../utils/format';
 
 
 
@@ -14,7 +15,8 @@ class MoviesTable extends Component {
         label: 'Title', 
         // this puts an hyperlink to the movie title
         content: movie => <Link to={`/movies/${movie._id}`}
-        style={{ textDecoration: 'none' }}>{movie.title}</Link>},
+        style={{ textDecoration: 'none' }}>
+            {capitalizeWords(movie.title)}</Link>},
     {path: 'genre.name', label: 'Genre'},
     {path: 'numberInStock', label: 'Stock'},
     {path: 'dailyRentalRate', label: 'Rate'},

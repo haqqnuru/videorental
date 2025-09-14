@@ -12,7 +12,7 @@ const Input =({name, label, error, helpText, ...rest}) => {
     <input className="form-control" 
     {...rest}
     name={name} 
-    id={name} autoFocus/>
+    id={name}/>
 
     {helpText && <div id={`${name}Help`} className="form-text">{helpText}</div>}
 

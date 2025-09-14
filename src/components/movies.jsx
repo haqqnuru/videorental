@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import {getMovies} from '../services/fakeMovieService';
+import {getMovies, deleteMovie } from '../services/movieService';
 import Pagination from '../common/pagination';
 import { paginate } from '../utils/paginate';
 import ListGroup from '../common/listGroup';
-import { getGenres } from '../services/fakeGenreService';
+import { getGenres } from '../services/genreService';
 import MoviesTable from './moviesTable';
 import _ from 'lodash';
 import { Link } from 'react-router-dom';
 import SearchBox from './searchBox';
+import {toast} from 'react-toastify';
 
 
 class Movies extends Component {
@@ -22,22 +23,38 @@ class Movies extends Component {
      };
 
      // this is called when an instance of the component is rendered in the dom
-componentDidMount() {
+async componentDidMount() {
     // adds 'All Genres' at the top of the listGroup
-  const genres = [{ _id: "", name: "All Genres" }, ...getGenres()];
+    const {data} = await getGenres();
+  const genres = [{ _id: "", name: "All Genres" }, ...data];
+
+  //rename data below to movies
+  const {data: movies} = await getMovies();
   this.setState({ 
-    movies: getMovies(), 
+    movies, 
     genres, 
-    selectedGenre: genres[0] // Select "All Genres" by default and makes it active
+    selectedGenre: genres[0], // Select "All Genres" by default and makes it active
+    currentPage: 1, // ⬅ force first page
+  sortColumn: { path: "title", order: "asc" } // ⬅ force alphabetical
   });
 }
 
      //deletes a movie
-handleDelete = (movie) => {
+handleDelete = async movie => {
+const originalMovies = this.state.movies;
     // this gets and displays all movies except the choosen movie.
-   const movies = this.state.movies.filter(m => m._id !== movie._id);
+   const movies = originalMovies.filter(m => m._id !== movie._id);
 // sets movies property to movies object.
-   this.setState({movies});
+   this.setState({ movies, currentPage: 1 });
+
+   try {
+   await deleteMovie(movie._id);
+}
+catch (ex) {
+    if (ex.response && ex.response.status === 404)
+toast.error('This movie has already been deleted.')
+    this.setState({movies: originalMovies});
+}
 }
 
 
@@ -97,7 +114,17 @@ getPagedData = () => {
 
         //sorting is after filtering data
         // lodash is used and note that it has three arguments
-        const sorted =_.orderBy(filtered, [sortColumn.path], [sortColumn.order])
+        // Always force title ascending unless user sorts manually
+    const sorted = _.orderBy(
+  filtered,
+  [
+    (movie) =>
+      sortColumn.path === "title"
+        ? movie.title.toLowerCase() // force case-insensitive title sort
+        : _.get(movie, sortColumn.path)
+  ],
+  [sortColumn.order]
+);
 
         //call paginate function
         // we removed the filtered below and added sorted in place for the list group 

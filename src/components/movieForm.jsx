@@ -1,8 +1,8 @@
 import React from 'react';
 import Form from '../common/form';
 import Joi from 'joi-browser';
-import { getGenres } from '../services/fakeGenreService';
-import { getMovie, saveMovie } from '../services/fakeMovieService';
+import { getGenres } from '../services/genreService';
+import { getMovie, saveMovie } from '../services/movieService';
 import withRouter from '../common/withRouter';
 
 
@@ -26,25 +26,37 @@ class MovieForm extends Form {
       numberInStock: Joi.number().required().min(0).max(100).label("Number in Stock"),
       dailyRentalRate: Joi.number().required().min(0).max(10).label("Daily Rental Rate")
      };
-  
-componentDidMount() {
-  //this gets the genres and update the state
-  const genres = getGenres();
-  this.setState({genres});
 
-  //this gets the parameter in the route and stores in the movieId
+
+     // populates the genre
+     async populateGenres() {
+  //this gets the genres and update the state
+  const {data:genres} = await getGenres();
+  this.setState({genres});
+     }
+
+//populate the movies
+      async populateMovies(){
+try {  
+    //this gets the parameter in the route and stores in the movieId
   const movieId = this.props.params.id;
   if (movieId === 'new') return;
-
-  //id not new, you get movie with a given id and if it does't exit it will redirect the user to not found
-  const movie = getMovie(movieId);
-  if (!movie) {
-    // delay navigation until after render
-    setTimeout(() => this.props.navigate('/notFound', { replace: true }));
-    return;
-  }
-
+    //id not new, you get movie with a given id and if it does't exit it will redirect the user to not found
+    const {data:movie} = await getMovie(movieId);
   this.setState({data: this.mapToViewModel(movie)});
+} 
+  catch (ex) {
+  if (ex.response && ex.response.status === 404) {
+    this.props.navigate('/notFound', { replace: true });
+  }
+}
+      }
+  
+async componentDidMount() {
+ await this.populateGenres();
+ await this.populateMovies();
+
+  
 }
 
 // Maps a movie object from the service/backend to the format needed by the form.
@@ -61,9 +73,9 @@ mapToViewModel(movie) {
 }
 
 //deals with the effects of submission
-  doSubmit = () => {
+  doSubmit = async () => {
     // save the movie
-    saveMovie(this.state.data);
+   await saveMovie(this.state.data);
 
     // then redirect back to movies
     this.props.navigate("/movies");
