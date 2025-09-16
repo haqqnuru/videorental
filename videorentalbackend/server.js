@@ -5,6 +5,7 @@ require("dotenv").config();
 
 const genres = require("./routes/genres");
 const movies = require("./routes/movies");
+const users = require("./routes/users");
 
 const app = express();
 app.use(cors());
@@ -13,6 +14,8 @@ app.use(express.json());
 // Routes
 app.use("/api/genres", genres);
 app.use("/api/movies", movies);
+app.use("/api/users", users);
+
 
 // DB connection
 mongoose.connect(process.env.MONGO_URI)
