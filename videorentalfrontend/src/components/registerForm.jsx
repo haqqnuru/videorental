@@ -2,6 +2,8 @@ import React from 'react';
 import Joi from "joi-browser";
 import Form from '../common/form';
 import * as userService from '../services/userService'
+import { useNavigate } from "react-router-dom";
+
 
 
 class RegisteForm extends Form {
@@ -25,7 +27,10 @@ class RegisteForm extends Form {
      doSubmit = async() => {
 
         try { 
-        await userService.register(this.state.data);
+            await userService.register(this.state.data);
+             // use navigate passed from wrapper
+      this.props.navigate("/");
+
 }
 catch (ex) {
     if (ex.response && ex.response.status === 400) {
@@ -63,4 +68,10 @@ catch (ex) {
     }
 }
  
-export default RegisteForm;
+//wrapper to inject navigate
+function RegisterFormWrapper(props) {
+  const navigate = useNavigate();
+  return <RegisteForm {...props} navigate={navigate} />;
+}
+
+export default RegisterFormWrapper;

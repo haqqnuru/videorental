@@ -1,13 +1,15 @@
 import React from 'react';
 import Joi from "joi-browser";
 import Form from '../common/form';
+import {login} from '../services/authService';
+import { useNavigate } from "react-router-dom";
 
 
 // note: it extends form and not component
 class LoginForm extends Form {
 state= {
     data: {
-        username:'',
+        email:'',
         password:''
     },
     errors: { }
@@ -15,11 +17,24 @@ state= {
 
 // schema for Joi
  schema = {
-    username: Joi.string().required().label("Username"),
+    email: Joi.string().required().label("Email"),
     password: Joi.string().required().label("Password")
   };
 
-    doSubmit = () => {
+  // handles submit login
+    doSubmit = async() => {
+        try {
+            const {data} = this.state;
+     await login(data.email, data.password);
+         // use navigate passed from wrapper
+      this.props.navigate("/");
+        } catch (ex) {
+           if(ex.response && ex.response.status === 400) {
+            const errors = {...this.state.errors};
+            errors.email = ex.response.data;
+            this.setState({errors});
+           } 
+        }
 
     }
     
@@ -33,7 +48,7 @@ state= {
     <form onSubmit={this.handleSubmit}>
 
 {/* shows username */}
-{this.renderInput("username", "Username", "text", "We'll never share your email with anyone else.")}
+{this.renderInput("email", "Email", "text", "We'll never share your email with anyone else.")}
 
 {/* shows password fields */}
 {this.renderInput("password", "Password", "password")}
@@ -48,4 +63,10 @@ state= {
     }
 }
  
-export default LoginForm;
+//wrapper to inject navigate
+function LoginFormWrapper(props) {
+  const navigate = useNavigate();
+  return <LoginForm {...props} navigate={navigate} />;
+}
+
+export default LoginFormWrapper;

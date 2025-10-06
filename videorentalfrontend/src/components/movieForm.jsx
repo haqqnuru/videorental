@@ -3,7 +3,7 @@ import Form from '../common/form';
 import Joi from 'joi-browser';
 import { getGenres } from '../services/genreService';
 import { getMovie, saveMovie } from '../services/movieService';
-import withRouter from '../common/withRouter';
+import { useNavigate, useParams } from "react-router-dom";
 
 
 class MovieForm extends Form {
@@ -111,4 +111,13 @@ render() {
   );
 }
 }
-export default withRouter(MovieForm);
+// Wrapper for React Router v6
+function MovieFormWrapper(props) {
+  const params = useParams();
+  const navigate = useNavigate();
+  return <MovieForm {...props} params={params} navigate={navigate} />;
+}
+
+export default MovieFormWrapper;
+
+
