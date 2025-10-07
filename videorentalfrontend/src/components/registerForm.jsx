@@ -2,7 +2,8 @@ import React from 'react';
 import Joi from "joi-browser";
 import Form from '../common/form';
 import * as userService from '../services/userService'
-import { useNavigate } from "react-router-dom";
+//import { useNavigate } from "react-router-dom";
+
 
 
 
@@ -28,8 +29,9 @@ class RegisteForm extends Form {
 
         try { 
             await userService.register(this.state.data);
-             // use navigate passed from wrapper
-      this.props.navigate("/");
+            window.location = "/"
+    //          // use navigate passed from wrapper
+    //   this.props.navigate("/");
 
 }
 catch (ex) {
@@ -68,10 +70,13 @@ catch (ex) {
     }
 }
  
-//wrapper to inject navigate
-function RegisterFormWrapper(props) {
-  const navigate = useNavigate();
-  return <RegisteForm {...props} navigate={navigate} />;
-}
+// //wrapper to inject navigate
+// function RegisterFormWrapper(props) {
+//   const navigate = useNavigate();
+//   return <RegisteForm {...props} navigate={navigate} />;
+// }
 
-export default RegisterFormWrapper;
+// export default RegisterFormWrapper;
+
+
+export default RegisteForm;

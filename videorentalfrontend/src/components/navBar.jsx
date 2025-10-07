@@ -3,7 +3,7 @@ import { Link, NavLink } from 'react-router-dom';
 import movies from '../assets/movies.png'
 
 
-const NavBar = () => {
+const NavBar = ({user}) => {
     return ( 
 
         <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -21,7 +21,18 @@ const NavBar = () => {
       <NavLink className="nav-item nav-link" to="/movies">Movies</NavLink>
       <NavLink className="nav-item nav-link" to="/customers">Customers</NavLink>
       <NavLink className="nav-item nav-link" to="/rentals">Rentals</NavLink>
-       <NavLink className="nav-item nav-link" to="/login">Login</NavLink>
+       
+       {/* make the login and register conditional so it does not show when someone is logged in */}
+      
+      { !user && (<React.Fragment>
+      <NavLink className="nav-item nav-link" to="/login">Login</NavLink>
+       <NavLink className="nav-item nav-link" to="/register">Register</NavLink>
+       </React.Fragment>)}
+
+       { user && (<React.Fragment>
+      <NavLink className="nav-item nav-link" to="/profile">{user.name}</NavLink>
+       <NavLink className="nav-item nav-link" to="/logout">Logout</NavLink>
+       </React.Fragment>)}
     </div>
   </div>
 </nav>

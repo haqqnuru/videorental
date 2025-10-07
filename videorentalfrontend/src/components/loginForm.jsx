@@ -1,8 +1,10 @@
 import React from 'react';
 import Joi from "joi-browser";
+//import { useNavigate } from "react-router-dom";
+
 import Form from '../common/form';
-import {login} from '../services/authService';
-import { useNavigate } from "react-router-dom";
+import auth from '../services/authService';
+
 
 
 // note: it extends form and not component
@@ -25,9 +27,9 @@ state= {
     doSubmit = async() => {
         try {
             const {data} = this.state;
-     await login(data.email, data.password);
-         // use navigate passed from wrapper
-      this.props.navigate("/");
+    await auth.login(data.email, data.password);
+    // redirects to homepage
+      window.location = "/";
         } catch (ex) {
            if(ex.response && ex.response.status === 400) {
             const errors = {...this.state.errors};
@@ -64,9 +66,11 @@ state= {
 }
  
 //wrapper to inject navigate
-function LoginFormWrapper(props) {
-  const navigate = useNavigate();
-  return <LoginForm {...props} navigate={navigate} />;
-}
 
-export default LoginFormWrapper;
+// no need anymore
+// function LoginFormWrapper(props) {
+//   const navigate = useNavigate();
+//   return <LoginForm {...props} navigate={navigate} />;
+// }
+
+export default LoginForm;
