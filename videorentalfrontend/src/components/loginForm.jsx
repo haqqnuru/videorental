@@ -1,6 +1,6 @@
 import React from 'react';
 import Joi from "joi-browser";
-//import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 import Form from '../common/form';
 import auth from '../services/authService';
@@ -28,8 +28,10 @@ state= {
         try {
             const {data} = this.state;
     await auth.login(data.email, data.password);
-    // redirects to homepage
-      window.location = "/";
+    // redirects
+    const { state } = this.props.location;
+window.location = state?.from?.pathname || "/";
+
         } catch (ex) {
            if(ex.response && ex.response.status === 400) {
             const errors = {...this.state.errors};
@@ -73,4 +75,10 @@ state= {
 //   return <LoginForm {...props} navigate={navigate} />;
 // }
 
-export default LoginForm;
+//wrapper to inject useLocation
+function WithLocation(props) {
+  const location = useLocation();
+  return <LoginForm {...props} location={location} />;
+}
+
+export default WithLocation;

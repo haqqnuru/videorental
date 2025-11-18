@@ -148,6 +148,7 @@ getPagedData = () => {
             sortColumn,
             searchQuery
         } = this.state;
+        const {user} = this.props;
         
         // if the length is 0, then display 0 or this play the number of movies
         if (count === 0)  return (
@@ -176,11 +177,12 @@ getPagedData = () => {
           
            <div className="col">
 
-            <Link 
+          {user && (
+          <Link 
             to='/movies/new'
             className='btn btn-primary'
             style={{marginBottom: 20, marginTop:20}}>
-            Add Movie</Link>
+            Add Movie</Link> )}
             
             {/* displays number of movies */}
              <p>Showing {totalCount} movies in the database.</p>

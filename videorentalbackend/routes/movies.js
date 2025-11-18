@@ -3,6 +3,8 @@ const mongoose = require("mongoose");
 const router = express.Router();
 const Movie = require("../models/Movie");
 const Genre = require("../models/Genre");
+const auth = require("../middleware/auth");
+const admin = require("../middleware/admin");
 
 // GET all movies
 router.get("/", async (req, res) => {
@@ -21,8 +23,8 @@ router.get("/:id", async (req, res) => {
   res.send(movie);
 });
 
-// ADD a new movie
-router.post("/", async (req, res) => {
+// ADD a new movie (auth required)
+router.post("/", auth, async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.body.genreId)) {
     return res.status(400).send("Invalid genre ID.");
   }
@@ -41,8 +43,8 @@ router.post("/", async (req, res) => {
   res.send(movie);
 });
 
-// UPDATE movie by ID
-router.put("/:id", async (req, res) => {
+// UPDATE movie by ID (auth required)
+router.put("/:id", auth, async (req, res) => {
   if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
     return res.status(404).send("Invalid movie ID.");
   }
@@ -68,11 +70,10 @@ router.put("/:id", async (req, res) => {
   res.send(movie);
 });
 
-// DELETE movie by ID
-router.delete("/:id", async (req, res) => {
+// DELETE movie by ID (auth + admin required)
+router.delete("/:id", [auth, admin], async (req, res) => {
   const { id } = req.params;
 
-  // Check if id is a valid MongoDB ObjectId
   if (!mongoose.Types.ObjectId.isValid(id)) {
     return res.status(404).send("Invalid movie ID.");
   }
